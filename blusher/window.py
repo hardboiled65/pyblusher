@@ -1,3 +1,4 @@
+from .observer import *
 import tkinter as tk
 
 class Window:
@@ -12,31 +13,34 @@ class Window:
         Inactive = 2
 
     def __init__(self, window_type):
-        self._type = window_type
-        self._title = None
-        self._x = 0
-        self._y = 0
+        self._attributes = Observable({
+            'type': window_type,
+            'title': None,
+            'x': 0,
+            'y': 0,
+        })
 
     @property
     def type(self):
-        return self._type
+        return self._attributes['type']
 
     @type.setter
     def type(self, window_type):
-        this._type = window_type
+        this._attributes['type'] = window_type
 
     @property
     def title(self):
-        return self._title
+        return self._attributes['title']
 
     @title.setter
     def title(self, title):
-        self._title = title
+        self._attributes['title'] = title
 
     def _set_parent(self, parent):
         print('Window: _set_parent()')
-        self._view = tk.Frame(parent, height=100, width=100)
-        self._view.pack()
+        self._view = Observer(self._attributes, tk.Frame,
+            parent, height=100, width=100)
+        self._view.instance.pack()
         print('Window: pack()')
 
 
