@@ -5,6 +5,7 @@ class Observable:
 
     def __setitem__(self, key, value):
         if value is not self._value[key]:
+            print('set: {}={}'.format(key, value))
             self._value[key] = value
             self.notify_observers(key=key, value=value)
 
@@ -16,7 +17,7 @@ class Observable:
 
     def notify_observers(self, *args, **kwargs):
         for observer in self._observers:
-            observer.notify(self, *args, **kwargs)
+            observer.update(self, *args, **kwargs)
 
 
 class Observer:
@@ -24,12 +25,13 @@ class Observer:
         self._instance = cls(*args, **kwargs)
         observable.register_observer(self)
 
-    def notify(self, observable, *args, **kwargs):
-        print('changed: {}={}'.format(kwargs['key'], kwargs['value']))
+    def update(self, observable, *args, **kwargs):
+        print('update: {}={}'.format(kwargs['key'], kwargs['value']))
         if (kwargs['key'] == 'title'):
-            print(hasattr(self.instance.master, 'title'))
             if hasattr(self.instance.master, 'title'):
                 self.instance.master.title(kwargs['value'])
+            if hasattr(self.instance, 'text'):
+                self.instance['text'] = kwargs['value']
 
     @property
     def instance(self):

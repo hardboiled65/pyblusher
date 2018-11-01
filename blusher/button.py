@@ -1,24 +1,32 @@
+from .view import View
+from .observer import *
 import tkinter as tk
 
 class ButtonType:
     PushButton = 0
 
-class Button:
+class Button(View):
     ButtonType = ButtonType
 
     def __init__(self, button_type=ButtonType.PushButton, title=None):
-        print(Button)
-        self._type = button_type
-        self._title = title
-        self._action = None
+        super().__init__()
+        self._attributes = Observable({
+            'type': button_type,
+            'title': title,
+            'action': None,
+        })
 
     @property
     def title(self):
-        return self._title
+        return self._attributes['title']
 
-    def _set_parent(self, parent):
-        print('Button: _set_parent()')
-        self._view = tk.Button(parent)
-        self._view['text'] = self.title
-        self._view.pack()
+    @title.setter
+    def title(self, value):
+        self._attributes['title'] = value
+
+    def _create_view(self, parent):
+        self._view = Observer(self._attributes, tk.Button, parent)
+        self._view.instance['text'] = self.title
+        self._view.instance.pack()
         print('Button: pack()')
+
